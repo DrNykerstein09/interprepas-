@@ -45,20 +45,14 @@ const Chatbot = () => {
     }
   };
 
-  useEffect(() => {
-    getMessage();
-  }, [chats]);
+  // useEffect(() => {
+  //   getMessage();
+  // }, [chats]);
 
   useEffect(() => {
     getMessage();
   }, []);
 
-  useEffect(() => {
-    if (fetch) {
-      getMessage();
-      setFetch(false);
-    }
-  }, [fetch]);
 
   useEffect(() => {
     if (chatWindowRef.current) {
@@ -71,7 +65,6 @@ const Chatbot = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("isAuth");
     window.location.reload();
-    // redirect("/");
   };
 
   return (
@@ -97,7 +90,7 @@ const Chatbot = () => {
         <section className="flex items-center">
           <img
             src={"/chatbotProfile.jpg"}
-            className="w-15 h-15 rounded-full m-2 mt-2 mb-2"
+            className="w-15 h-18 rounded-full m-2 mt-2 mb-2"
             alt=""
           />
           <h4 className="text-2xl text-black font-medium flex-col">

@@ -30,7 +30,7 @@ const ChatScrollable = () => {
               className="message"
               style={{
                 backgroundColor: "#F3F4F6",
-                marginLeft: 0,
+                marginLeft: 20,
                 width: "fit-content",
                 marginTop: 10,
                 borderRadius: "20px",
