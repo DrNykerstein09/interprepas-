@@ -1,0 +1,58 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+body {
+  background: rgb(223, 63, 125);
+  background: linear-gradient(
+    0deg,
+    rgba(223, 63, 125, 1) 0%,
+    rgba(255, 52, 52, 1) 100%
+  );
+  background-attachment: fixed;
+  font-family: Montserrat, sans-serif;
+}
+
+body.message-page-active {
+  background: rgb(223, 63, 125);
+  background: linear-gradient(
+    0deg,
+    rgba(223, 63, 125, 1) 0%,
+    rgba(255, 52, 52, 1) 100%
+  );
+  background-attachment: fixed;
+  font-family: Montserrat, sans-serif;
+}
+
+.svg-rect {
+  fill: none;
+  stroke: white;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 32px;
+}
+
+.svg-polyline {
+  fill: none;
+  stroke: white;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 32px;
+}
+
+.message {
+  scrollbar-width: none;
+}
+.blurr {
+  position: relative;
+  overflow: hidden;
+}
+
+.thin-line {
+  border: none;
+  height: 0.5px;
+  background-color: #ffe4e4;
+  margin-left: auto;
+  transform-origin: 0 0;
+  transform: scaleY(0.3);
+}
