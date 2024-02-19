@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useEffect, useRef, useState } from "react";
-import ScrollableFeed from "react-scrollable-feed";
 import useLLM from "usellm";
 import { ChatbotContext } from "../context/chatBotContext";
-import { userApi } from "../api/userApi";
-// import chatBotResponse from "../helpers/chatbotResponse";
-// import { getSender, isLastMessage, isSameSender } from "../helpers/Functions";
+import ErrorAlert from "../helpers/ErrorAlert";
+import ChatScrollable from "./ChatScrollable";
+import { redirect } from "react-router-dom";
 
 const Chatbot = () => {
+  const [fetch, setFetch] = useState(false);
   const llm = useLLM({ serviceUrl: "https://usellm.org/api/llm" });
-  const userId = localStorage.getItem("userId");
-  // const lastMessageRef = useRef<HTMLDivElement>(null);
-  const { response, handleTyping, message, setResponse, submitQuerry } =
+  const [alert, setAlert] = useState(false);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
+  const { handleTyping, message, submitQuerry, getMessage, chats } =
     useContext(ChatbotContext);
 
   const chatBotResponse = async () => {
@@ -19,82 +19,100 @@ const Chatbot = () => {
       messages: [
         {
           role: "user",
-          content: "Hola",
+          content: message,
         },
       ],
-      stream: true,
-      onStream: ({ message }) => {
-        setResponse(message.content);
-      },
     });
+
     return data.message.content;
   };
+
   const handleSubmitMessage = async () => {
-    await chatBotResponse().then((resp) => {
-      submitQuerry(resp);
-    });
+    if (!message) {
+      setAlert(true);
+      setTimeout(() => {
+        setAlert(false);
+      }, 3000);
+      return;
+    } else {
+      await chatBotResponse()
+        .then(async (res) => {
+          submitQuerry(res);
+          setAlert(false);
+          window.location.reload();
+        })
+        .catch((error) => console.log(error));
+    }
   };
 
   useEffect(() => {
-    if (userId) {
-      const config = {
-        params: {
-          userId, // Include userId as a query parameter
-        },
-      };
+    getMessage();
+  }, [chats]);
 
-      const data = userApi.get("/api/chatbot/getMessages", config);
-      console.log(data);
-    } else {
-      // Handle the case where userId is null
+  useEffect(() => {
+    getMessage();
+  }, []);
+
+  useEffect(() => {
+    if (fetch) {
+      getMessage();
+      setFetch(false);
     }
-  }, [response]);
+  }, [fetch]);
 
+  useEffect(() => {
+    if (chatWindowRef.current) {
+      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+    }
+  }, [chats]);
+
+  const handleLogOut = () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAuth");
+    window.location.reload();
+    // redirect("/");
+  };
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex col overflow-y-scroll messages w-full">
+      <nav className="flex items-center bg-primary justify-start p-5 pb-3 pt-3 sticky top-0 z-5">
+        <span className="mr-4 ml-2" onClick={handleLogOut}>
+          <svg
+            className="w-8 h-8 text-[#1e2936]"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="#1e2936"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 5H1m0 0 4 4M1 5l4-4"
+            />
+          </svg>
+        </span>
+        <section className="flex items-center">
+          <img
+            src={"/chatbotProfile.jpg"}
+            className="w-15 h-15 rounded-full m-2 mt-2 mb-2"
+            alt=""
+          />
+          <h4 className="text-2xl text-black font-medium flex-col">
+            Chatbot
+          </h4>
+        </section>
+      </nav>
+
+      <div
+        className="flex col overflow-y-scroll messages w-full"
+        ref={chatWindowRef}
+      >
+        {alert && <ErrorAlert message="Debes escribir algo" />}
         <div className="w-full">
-          <ScrollableFeed>
-            {/* {chat.map((m, i) => {
-              return (
-                <div className="flex flex-col" key={i}>
-                  <span
-                    className="message"
-                    style={{
-                      backgroundColor: `${i % 2 === 0 ? "#FFD3D3" : "#F3F4F6"}`,
-                      width: "fit-content",
-                      marginLeft: "auto",
-                      marginTop: 10,
-                      borderRadius: "20px",
-                      padding: "8px 27px",
-                      maxWidth: "75%",
-                      color: "rgb(31, 41, 55)",
-                      overflowWrap: "break-word",
-                    }}
-                  >
-                    {m.query}
-                  </span>
-                  <span
-                    className="message"
-                    style={{
-                      backgroundColor: `${i % 2 === 0 ? "#FFD3D3" : "#F3F4F6"}`,
-                      marginLeft: 0,
-                      width: "fit-content",
-                      marginTop: 10,
-                      borderRadius: "20px",
-                      padding: "8px 27px",
-                      maxWidth: "75%",
-                      color: "rgb(31, 41, 55)",
-                      overflowWrap: "break-word",
-                    }}
-                  >
-                    {m.answer}
-                  </span>
-                </div>
-              );
-            })} */}
-          </ScrollableFeed>
+          <ChatScrollable />
         </div>
       </div>
 
@@ -108,7 +126,7 @@ const Chatbot = () => {
         />
         <button
           onClick={handleSubmitMessage}
-          className="rounded-full bg-[#ffa1a1] w-14 h-12 "
+          className="rounded-full bg-[#ffa1a1] w-14 h-12 ml-2"
         >
           <svg
             className="w-7 h-7 text-gray-800 m-auto transform -rotate-180"

@@ -13,10 +13,6 @@ const CreateAccount = () => {
 
   if (
     errorLogIn.name ||
-    errorLogIn.group ||
-    errorLogIn.gender ||
-    errorLogIn.preference ||
-    errorLogIn.birthDate ||
     userLogIn.name === ""
   ) {
     return <Navigate to="/registrando_user" />;

@@ -3,7 +3,7 @@ import { User, IUser } from "../models/UserModel";
 import jwt from "jsonwebtoken";
 
 export const newMessage = async (req: Request, res: Response) => {
-  const { userId, response, message } = req.body;
+  const { userId, resp, message } = req.body;
   console.log(req.body);
   try {
     const user = await User.findById(userId);
@@ -11,15 +11,15 @@ export const newMessage = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Usuario no encontrado" });
     if (!message)
       return res.status(400).json({ message: "Mensaje no puede ser vacío" });
-    user.querries.push({ querry: message, answer: response });
+    user.querries.push({ querry: message, answer: resp });
     await user.save();
   } catch (error) {}
 };
 
 export const getMessages = async (req: Request, res: Response) => {
-//   const { userId } = req.body;
-   // const userId = req.params.userId;
-   const userId = req.query.userId;
+  //   const { userId } = req.body;
+  // const userId = req.params.userId;
+  const userId = req.query.userId;
   console.log(userId);
 
   try {
