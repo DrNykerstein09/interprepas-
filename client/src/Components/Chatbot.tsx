@@ -4,10 +4,8 @@ import useLLM from "usellm";
 import { ChatbotContext } from "../context/chatBotContext";
 import ErrorAlert from "../helpers/ErrorAlert";
 import ChatScrollable from "./ChatScrollable";
-import { redirect } from "react-router-dom";
 
 const Chatbot = () => {
-  const [fetch, setFetch] = useState(false);
   const llm = useLLM({ serviceUrl: "https://usellm.org/api/llm" });
   const [alert, setAlert] = useState(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);

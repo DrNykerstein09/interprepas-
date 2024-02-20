@@ -8,7 +8,11 @@ const HeaderLogo = ({ message }: Message) => {
   return (
     <header className="flex justify-between m-4">
       <Link to="/">
-        <img className="w-15 h-15 mr-1" src="/svg/Logo.svg" alt="" />
+        <img
+          className="w-15 h-15 mr-1 rounded-17"
+          src="/chatbotProfile.jpg"
+          alt=""
+        />
       </Link>
       <h1 className="text-right self-center text-2xl font-caprasimo text-[#FFE4E4] w-3/4">
         {message}
